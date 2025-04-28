@@ -3,20 +3,20 @@ import app from '../index.js';
 import { strict as assert } from 'assert';
 
 const testUser = {
-    nombre: 'Test User13',
-    correo: 'testuser13@gmail.com',
-    contrasena: 'testpassword13'
+    nombre: 'Test User16',
+    correo: 'testuser16@gmail.com',
+    contrasena: 'testpassword16'
 };
 
 let token;
 
 before(async () => {
-    // Register test user before running tests
+    // Register
     await request(app)
         .post('/api/usuarios/register')
         .send(testUser);
 
-    // Login to get token
+    // Login token
     const res = await request(app)
         .post('/api/usuarios/login')
         .send({ correo: testUser.correo, contrasena: testUser.contrasena });

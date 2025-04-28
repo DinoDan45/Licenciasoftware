@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from 'react';
+import { loginUser as apiLoginUser, registerUser as apiRegisterUser } from '../api/auth.js';
 
 export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
@@ -19,8 +20,23 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
     };
 
+    const loginUser = async (data) => {
+        const response = await apiLoginUser(data);
+        if (!response.token) {
+            throw new Error('Token not received');
+        }
+        login(response.token);
+        return response;
+    };
+
+    const registerUser = async (data) => {
+        const response = await apiRegisterUser(data);
+        login(response.token);
+        return response;
+    };
+
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, login, logout, loginUser, registerUser }}>
             {children}
         </AuthContext.Provider>
     );

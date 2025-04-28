@@ -1,5 +1,5 @@
 import axios from 'axios';
-const API = 'http://localhost:3000/api/usuarios';
+const API = '/api/usuarios';
 
 export const loginUser = async (data) => {
     const res = await axios.post(`${API}/login`, data);
@@ -7,6 +7,6 @@ export const loginUser = async (data) => {
 };
 
 export const registerUser = async (data) => {
-    const res = await axios.post(`${API}/registro`, data);
+    const res = await axios.post(`${API}/register`, data);
     return res.data;
 };

@@ -3,13 +3,12 @@ import app from '../index.js';
 import { strict as assert } from 'assert';
 
 const testUser = {
-    nombre: 'Test User15',
-    correo: 'testuser15@gmail.com',
-    contrasena: 'testpassword15'
+    nombre: 'Test User19',
+    correo: 'testuser19@gmail.com',
+    contrasena: 'testpassword19'
 };
 
 before(async () => {
-    // Register test user before running tests
     await request(app)
         .post('/api/usuarios/register')
         .send(testUser);

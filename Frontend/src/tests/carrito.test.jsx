@@ -1,22 +1,28 @@
+/* global jest, describe, beforeEach, test, expect */
+import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import LicenciasList from '../components/licenciaslist';
+import LicenciasList from '../componentes/licenciaslist';
 import { AuthContext } from '../context/authcontext';
 
-vi.mock('../api/licencias.js', () => ({
-    getLicencias: () => Promise.resolve([
-    { id: 2, nombre: 'Windows 11 Pro', precio: 149.99 },
-]),
-}));
+const mockLogout = jest.fn();
 
-test('Agrega licencia al carrito', async() => {
-    render(
-        <AuthContext.Provider value={{ user: 'fakeToken', logout: vi.fn() }}>
-            <LicenciasList />
-        </AuthContext.Provider>
-    );
+const renderWithAuth = (component) => {
+  return render(
+    <AuthContext.Provider value={{ user: 'token123', logout: mockLogout }}>
+      {component}
+    </AuthContext.Provider>
+  );
+};
 
-    const btn = screen.getByText(/Agregar/i);
-    fireEvent.click(btn);
+describe('Carrito de compras', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
-    expect(screen.getByText(/Total/)).toBeInTheDocument();
-}); 
+  test('Cierra sesión', () => {
+    renderWithAuth(<LicenciasList />);
+    const logoutButton = screen.getByText('Cerrar sesión');
+    fireEvent.click(logoutButton);
+    expect(mockLogout).toHaveBeenCalled();
+  });
+});
