@@ -1,8 +1,11 @@
-const express = require('express');
+import express from 'express';
+import controller from '../controllers/usuarios.controller.js';
+import auth from '../seguridad/verifyToken.js';
+
 const router = express.Router();
-const controller = require('../controllers/usuarios.controller');
 
-router.post('/register', controller.registrar);
 router.post('/login', controller.login);
+router.post('/register', controller.register);
+router.get('/', auth, controller.list);
 
-module.exports = router;
+export default router;

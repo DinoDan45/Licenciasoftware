@@ -1,4 +1,4 @@
-const Transaccion = require('../models/transaccion.model');
+import Transaccion from '../models/transaccion.model.js';
 
 const TransaccionesController = {
     async listar(req, res) {
@@ -8,8 +8,8 @@ const TransaccionesController = {
     
     async crear(req, res) {
         const id = await Transaccion.create(req.body);
-        res.status(201).json({ id, mensaje: 'Transacción registrada' });
+        res.status(201).json({ id, mensaje: 'Transacción creada' });
     }
 };
 
-module.exports = TransaccionesController;
+export default TransaccionesController;

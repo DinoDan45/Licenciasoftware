@@ -1,4 +1,4 @@
-const db = require('../config/db');
+import db from '../config/db.js';
 
 const Licencia = {
     async getAll() {
@@ -7,11 +7,11 @@ const Licencia = {
     },
     async create(licencia) {
         const [result] = await db.query(
-            'INSERT INTO licencias (nombre, descripcion, precio, duracion_dias) VALUES (?, ?, ?, ?)',
-            [licencia.nombre, licencia.descripcion, licencia.precio, licencia.duracion_dias]
+            'INSERT INTO licencias (nombre_producto, descripcion, precio, cantidad_disponible) VALUES (?, ?, ?, ?)',
+            [licencia.nombre_producto, licencia.descripcion, licencia.precio, licencia.cantidad_disponible]
         );
         return result.insertId;
     }
 };
 
-module.exports = Licencia;
+export default Licencia;

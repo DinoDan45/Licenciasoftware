@@ -1,9 +1,10 @@
-const express = require('express');
-const router = express.Router();
-const controller = require('../controllers/transacciones.controller');
-const auth = require('../seguridad/verifyToken');
+import express from 'express';
+import controller from '../controllers/transacciones.controller.js';
+import auth from '../seguridad/verifyToken.js';
 
-router.get('/', auth, controller.listar);
+const router = express.Router();
+
+router.get('/', controller.listar);
 router.post('/', auth, controller.crear);
 
-module.exports = router;
+export default router;

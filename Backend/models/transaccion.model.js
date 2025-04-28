@@ -1,18 +1,17 @@
-const db = require('../config/db');
+import db from '../config/db.js';
 
 const Transaccion = {
     async getAll() {
         const [rows] = await db.query('SELECT * FROM transacciones');
         return rows;
     },
-
     async create(transaccion) {
         const [result] = await db.query(
-            'INSERT INTO transacciones (id_usuario, id_licencia, fecha_compra) VALUES (?, ?, ?)',
-            [transaccion.id_usuario, transaccion.id_licencia, new Date()]
+            'INSERT INTO transacciones (usuario_id, licencia_id, cantidad, total) VALUES (?, ?, ?, ?)',
+            [transaccion.usuario_id, transaccion.licencia_id, transaccion.cantidad, transaccion.total]
         );
         return result.insertId;
     }
 };
 
-module.exports = Transaccion;
+export default Transaccion;

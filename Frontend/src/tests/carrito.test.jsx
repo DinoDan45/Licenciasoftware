@@ -2,15 +2,17 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import LicenciasList from '../components/licenciaslist';
 import { AuthContext } from '../context/authcontext';
 
-const mockLicencias = [
-    { id: 1, nombre: 'Windows 11 Pro', precio: 149.99 },
-];
+vi.mock('../api/licencias.js', () => ({
+    getLicencias: () => Promise.resolve([
+    { id: 2, nombre: 'Windows 11 Pro', precio: 149.99 },
+]),
+}));
 
-test('Agrega licencia al carrito', () => {
+test('Agrega licencia al carrito', async() => {
     render(
-    <AuthContext.Provider value={{ user: 'fakeToken', logout: vi.fn() }}>
-        <LicenciasList />
-    </AuthContext.Provider>
+        <AuthContext.Provider value={{ user: 'fakeToken', logout: vi.fn() }}>
+            <LicenciasList />
+        </AuthContext.Provider>
     );
 
     const btn = screen.getByText(/Agregar/i);

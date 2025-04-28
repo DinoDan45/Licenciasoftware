@@ -1,13 +1,13 @@
-const express = require('express');
-const app = express();
-const cors = require('cors');
-const morgan = require('morgan');
-require('dotenv').config();
+import express from 'express';
+import cors from 'cors';
+import morgan from 'morgan';
+import config from './config.js';
+import userRoutes from './routes/usuarios.routes.js';
+import licenciaRoutes from './routes/licencias.routes.js';
+import transaccionRoutes from './routes/transacciones.routes.js';
+import db from './config/db.js';
 
-const userRoutes = require('./routes/usuarios.routes');
-const licenciaRoutes = require('./routes/licencias.routes');
-const transaccionRoutes = require('./routes/transacciones.routes');
-const db = require('./config/db');
+const app = express();
 
 app.use(cors());
 app.use(morgan('dev'));
@@ -21,13 +21,17 @@ app.get('/', (req, res) => {
     res.send('API de gestión de licencias de software');
 });
 
-const PORT = process.env.PORT || 3000;
-db.getConnection()
-.then(() => {
-    app.listen(PORT, () => {
-        console.log(`Servidor ejecutándose en puerto ${PORT}`);
-    });
-})
-.catch((err) => {
-    console.error('Error al conectar a la base de datos:', err);
-});
+if (process.env.NODE_ENV !== 'test') {
+    db.getConnection()
+        .then(connection => {
+            connection.release();
+            app.listen(config.port, () => {
+                console.log(`Servidor ejecutándose en puerto ${config.port}`);
+            });
+        })
+        .catch((err) => {
+            console.error('Error al conectar a la base de datos:', err);
+        });
+}
+
+export default app;

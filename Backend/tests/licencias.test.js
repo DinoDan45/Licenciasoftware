@@ -1,27 +1,42 @@
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-const app = require('../index');
-const expect = chai.expect;
+import request from 'supertest';
+import app from '../index.js';
+import { strict as assert } from 'assert';
 
-chai.use(chaiHttp);
+const testUser = {
+    nombre: 'Test User13',
+    correo: 'testuser13@gmail.com',
+    contrasena: 'testpassword13'
+};
 
-const token = '$2a$10$Q9P1vgkNZXkY6MNdG0s3f.KOsz3vGfKtrTQXlAjJtUq7hGm9h1R2q'; // reemplázalo con un token real de prueba
+let token;
+
+before(async () => {
+    // Register test user before running tests
+    await request(app)
+        .post('/api/usuarios/register')
+        .send(testUser);
+
+    // Login to get token
+    const res = await request(app)
+        .post('/api/usuarios/login')
+        .send({ correo: testUser.correo, contrasena: testUser.contrasena });
+    assert.equal(res.status, 200);
+    token = res.body.token;
+});
 
 describe('Crear Licencia', () => {
-    it('Debe crear una nueva licencia', (done) => {
-        chai
-        .request(app)
-        .post('/api/licencias')
-        .set('Authorization', token)
-        .send({
-            nombre: 'Visual Studio Pro',
-            descripcion: 'Entorno de desarrollo para .NET',
-            precio: 199.99,
-        })
-        .end((err, res) => {
-            expect(res).to.have.status(201);
-            expect(res.body).to.have.property('mensaje');
-            done();
-        });
+    it('Debe crear una nueva licencia', async () => {
+        const res = await request(app)
+            .post('/api/licencias')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                nombre_producto: 'Visual Studio Pro',
+                descripcion: 'Entorno de desarrollo para .NET',
+                precio: 189.99,
+                cantidad_disponible: 55,
+            });
+
+        assert.equal(res.status, 201);
+        assert.ok(res.body.mensaje);
     });
 });

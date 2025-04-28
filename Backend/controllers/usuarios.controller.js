@@ -1,39 +1,49 @@
-const Usuario = require('../models/usuario.model');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+import db from '../config/db.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import config, { jwtSecret } from '../config.js';
 
 const UsuariosController = {
-    async registrar(req, res) {
-        try {
-            const { nombre, email, password, tipo_usuario } = req.body;
-            const hashedPassword = await bcrypt.hash(password, 10);
-            const id = await Usuario.create({ nombre, email, password: hashedPassword, tipo_usuario });
-            res.status(201).json({ id, mensaje: 'Usuario registrado exitosamente' });
-        } catch (error) {
-            res.status(500).json({ mensaje: 'Error al registrar usuario', error });
-        }
-    },
-    
     async login(req, res) {
+        const { correo, contrasena } = req.body;
         try {
-            const { email, password } = req.body;
-            const usuario = await Usuario.findByEmail(email);
-            if (!usuario) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
-
-            const match = await bcrypt.compare(password, usuario.password);
-            if (!match) return res.status(401).json({ mensaje: 'Contraseña incorrecta' });
-            
-            const token = jwt.sign(
-                { id: usuario.id_usuario, tipo_usuario: usuario.tipo_usuario },
-                process.env.JWT_SECRET,
-                { expiresIn: '1h' }
-            );
-            
+            const [rows] = await db.query('SELECT * FROM usuarios WHERE email = ?', [correo]);
+            if (rows.length === 0) {
+                return res.status(401).json({ mensaje: 'Usuario no encontrado' });
+            }
+            const user = rows[0];
+            const validPassword = await bcrypt.compare(contrasena, user.password);
+            if (!validPassword) {
+                return res.status(401).json({ mensaje: 'Contraseña incorrecta' });
+            }
+            const token = jwt.sign({ id: user.id, email: user.email }, jwtSecret, { expiresIn: '1h' });
+            console.log('Generated JWT token:', token);
             res.json({ token });
         } catch (error) {
-            res.status(500).json({ mensaje: 'Error en login', error });
+            res.status(500).json({ mensaje: 'Error en el servidor' });
+        }
+    },
+
+    async register(req, res) {
+        const { nombre, correo, contrasena } = req.body;
+        try {
+            const hashedPassword = await bcrypt.hash(contrasena, 10);
+            const [result] = await db.query('INSERT INTO usuarios (nombre, email, password) VALUES (?, ?, ?)', [nombre, correo, hashedPassword]);
+            res.status(201).json({ id: result.insertId, mensaje: 'Usuario registrado' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ mensaje: 'Error en el servidor' });
+        }
+    },
+
+    async list(req, res) {
+        try {
+            const [rows] = await db.query('SELECT id, email FROM usuarios');
+            res.json(rows);
+        } catch (error) {
+            res.status(500).json({ mensaje: 'Error en el servidor' });
         }
     }
 };
 
-module.exports = UsuariosController;
+export default UsuariosController;

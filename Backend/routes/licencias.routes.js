@@ -1,9 +1,10 @@
-const express = require('express');
+import express from 'express';
+import controller from '../controllers/licencias.controller.js';
+import auth from '../seguridad/verifyToken.js';
+
 const router = express.Router();
-const controller = require('../controllers/licencias.controller');
-const auth = require('../seguridad/verifyToken');
 
 router.get('/', controller.listar);
 router.post('/', auth, controller.crear);
 
-module.exports = router;
+export default router;

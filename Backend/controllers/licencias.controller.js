@@ -1,4 +1,4 @@
-const Licencia = require('../models/licencia.model');
+import Licencia from '../models/licencia.model.js';
 
 const LicenciasController = {
     async listar(req, res) {
@@ -12,4 +12,4 @@ const LicenciasController = {
     }
 };
 
-module.exports = LicenciasController;
+export default LicenciasController;

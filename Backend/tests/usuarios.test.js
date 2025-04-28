@@ -1,20 +1,27 @@
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-const app = require('../index'); // exporta tu app en index.js con module.exports = app
-const expect = chai.expect;
+import request from 'supertest';
+import app from '../index.js';
+import { strict as assert } from 'assert';
 
-chai.use(chaiHttp);
+const testUser = {
+    nombre: 'Test User15',
+    correo: 'testuser15@gmail.com',
+    contrasena: 'testpassword15'
+};
+
+before(async () => {
+    // Register test user before running tests
+    await request(app)
+        .post('/api/usuarios/register')
+        .send(testUser);
+});
 
 describe('Pruebas de Login de Usuario', () => {
-    it('Debe iniciar sesión correctamente', (done) => {
-        chai
-        .request(app)
-        .post('/api/usuarios/login')
-        .send({ correo: 'cliente1@example.com', contrasena: 'admin123' }) // asegúrate que este user exista
-        .end((err, res) => {
-            expect(res).to.have.status(200);
-            expect(res.body).to.have.property('token');
-            done();
-        });
+    it('Debe iniciar sesión correctamente', async () => {
+        const res = await request(app)
+            .post('/api/usuarios/login')
+            .send(testUser);
+
+        assert.equal(res.status, 200);
+        assert.ok(res.body.token);
     });
 });
