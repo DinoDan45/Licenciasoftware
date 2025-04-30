@@ -3,7 +3,7 @@
     margin: 0 auto;
     padding: 1rem;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #333;
+    color: #000000;
     display: flex;
     flex-wrap: wrap;
     gap: 2rem;
@@ -18,7 +18,7 @@
 }
 
 .logout-button {
-    background-color: #e74c3c;
+    background: linear-gradient(135deg, #10dfd4, #123af0);;
     color: white;
     border: none;
     padding: 0.5rem 1rem;
@@ -29,7 +29,7 @@
 }
 
 .logout-button:hover {
-    background-color: #c0392b;
+    background: linear-gradient(135deg, #10dfd4, #123af0);
 }
 
 .search-input {
@@ -50,9 +50,9 @@
 }
 
 .licencia-card {
-    background-color: #fff;
+    background: linear-gradient(135deg, #10dfd4, #123af0);
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -80,13 +80,13 @@
 .licencia-info h3 {
     margin: 0 0 0.5rem 0;
     font-size: 1.2rem;
-    color: #2c3e50;
+    color: #000000;
 }
 
 .licencia-info p {
     margin: 0 0 1rem 0;
     font-weight: 700;
-    color: #27ae60;
+    color: #ffffff;
 }
 
 .add-button {
@@ -117,7 +117,7 @@
     margin-top: 0;
     margin-bottom: 1rem;
     font-size: 1.3rem;
-    color: #34495e;
+    color: #000000;
 }
 
 .carrito ul {

@@ -18,13 +18,13 @@ export default function Login() {
             try {
                 if (isRegistering) {
                     await registerUser({ nombre, correo, contrasena });
-                    setIsRegistering(false); // Switch to login tab after successful registration
+                    setIsRegistering(false); // registration
                     setNombre('');
                     setCorreo('');
                     setContrasena('');
                 } else {
                     await loginUser({ correo, contrasena });
-                    navigate('/licencias'); // Redirect to licenses page after login
+                    navigate('/licencias'); // after login
                 }
             } catch {
                 setError('Correo o contraseña incorrectos');

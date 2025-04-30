@@ -8,7 +8,6 @@ export default function LicenciasList() {
     const { user, logout } = useAuth();
     const [licencias, setLicencias] = useState([]);
     const [carrito, setCarrito] = useState([]);
-    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         const cargar = async () => {
@@ -30,19 +29,37 @@ export default function LicenciasList() {
     }, [user]);
 
     const agregarAlCarrito = (lic) => {
-        setCarrito([...carrito, lic]);
+        setCarrito((prevCarrito) => {
+            const existingIndex = prevCarrito.findIndex(item => item.id === lic.id);
+            if (existingIndex !== -1) {
+                const updatedCarrito = [...prevCarrito];
+                updatedCarrito[existingIndex].cantidad += 1;
+                return updatedCarrito;
+            } else {
+                return [...prevCarrito, { ...lic, cantidad: 1 }];
+            }
+        });
     };
 
     const vaciarCarrito = () => {
         setCarrito([]);
     };
 
-    const totalCompra = carrito.reduce((acc, item) => acc + parseFloat(item.precio), 0);
+    const totalCompra = carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
 
     const comprarCarrito = async () => {
         try {
+            // Extract user id from token if possible, else fallback to 1
+            // For now, fallback to 1 as user id extraction is not implemented
+            const usuario_id = 1;
             for (const item of carrito) {
-                await crearTransaccion({ usuario_id: 1, licencia_id: item.id, metodo_pago: 'Tarjeta', total: item.precio }, user);
+                await crearTransaccion({
+                    usuario_id,
+                    licencia_id: item.id,
+                    cantidad: item.cantidad,
+                    total: item.precio * item.cantidad,
+                    metodo_pago: 'Tarjeta'
+                }, user);
             }
             alert('Compra realizada exitosamente');
             setCarrito([]);
@@ -51,30 +68,19 @@ export default function LicenciasList() {
         }
     };
 
-    const filteredLicencias = licencias.filter((lic) =>
-        lic.nombre && lic.nombre.toLowerCase().includes(searchTerm.toLowerCase())
-    );    
-
     return (
         <div className="licencias-container">
             <header className="licencias-header">
                 <h2>Licencias disponibles</h2>
                 <button onClick={logout} className="logout-button">Cerrar sesión</button>
             </header>
-            <input
-                type="text"
-                placeholder="Buscar licencias..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input"
-            />
             <div className="licencias-grid">
-                {filteredLicencias.map((lic) => (
+                {licencias.map((lic) => (
                     <div key={lic.id} className="licencia-card">
-                        <img src={lic.imagen_url} alt={lic.nombre} className="licencia-image" />
+                        <img src={lic.imagen_url || '/placeholder.png'} alt={lic.nombre_producto} className="licencia-image" />
                         <div className="licencia-info">
-                            <h3>{lic.nombre}</h3>
-                            <p>${lic.precio.toFixed(2)}</p>
+                            <h3>{lic.nombre_producto}</h3>
+                            <p>${parseFloat(lic.precio).toFixed(2)}</p>
                             <button onClick={() => agregarAlCarrito(lic)} className="add-button">Agregar</button>
                         </div>
                     </div>
@@ -84,7 +90,9 @@ export default function LicenciasList() {
                 <h3>Carrito</h3>
                 <ul>
                     {carrito.map((item, index) => (
-                        <li key={index}>{item.nombre} - ${item.precio.toFixed(2)}</li>
+                        <li key={index}>
+                            {item.nombre_producto} - Cantidad: {item.cantidad} - Precio unitario: ${parseFloat(item.precio).toFixed(2)} - Total: ${(item.precio * item.cantidad).toFixed(2)}
+                        </li>
                     ))}
                 </ul>
                 <p><strong>Total: ${totalCompra.toFixed(2)}</strong></p>

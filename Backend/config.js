@@ -6,8 +6,8 @@ dotenvConfig();
 const config = {
     env: process.env.NODE_ENV || 'development',
     port: process.env.PORT || 3000,
-    dbUser: process.env.DB_USER || 'root',
-    dbPassword: process.env.DB_PASSWORD || 'root',
+    dbUser: process.env.DB_USER,
+    dbPassword: process.env.DB_PASSWORD,
     dbHost: process.env.DB_HOST || 'localhost',
     dbName: process.env.DB_NAME || 'licencias_software',
     dbPort: process.env.DB_PORT || 3306,
